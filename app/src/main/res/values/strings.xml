@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AlbornozTP2</string>
+    <string name="iniciar_servicio">Iniciar Servicio</string>
 </resources>
