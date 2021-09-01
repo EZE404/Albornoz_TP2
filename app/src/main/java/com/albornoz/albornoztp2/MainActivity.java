@@ -16,7 +16,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pedirPermisos();
-        arrancarServicio();
+        i = new Intent(this, LogSms.class);
+        this.startService(i);
     }
 
     private void pedirPermisos() {
@@ -29,10 +30,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void arrancarServicio() {
-        i = new Intent(this, LogSms.class);
-        this.startService(i);
-    }
 
     @Override
     protected void onDestroy() {

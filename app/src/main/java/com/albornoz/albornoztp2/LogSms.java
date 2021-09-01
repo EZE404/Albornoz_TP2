@@ -1,20 +1,22 @@
 package com.albornoz.albornoztp2;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Telephony;
 import android.util.Log;
 
 public class LogSms extends Service {
-
     Thread tarea;
-
     public LogSms() {
     }
 
+    @SuppressLint("Range")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Uri mensajes = Uri.parse("content://sms/inbox");
@@ -25,9 +27,10 @@ public class LogSms extends Service {
             public void run() {
 
                 while (true) {
+
                     Cursor cursor = contentResolver.query(
                             mensajes,
-                            null,
+                            new String[]{"date", "address", "body"},
                             null,
                             null,
                             "date desc"
@@ -36,28 +39,28 @@ public class LogSms extends Service {
                     if (cursor != null && cursor.getCount() > 0) {
 
                         int count = 0;
-                        String date, person, body;
+                        String number, body;
 
                         while (cursor.moveToNext() && count <= 4) {
                             // rescatar los campos del cursor
-                            date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
-                            person = cursor.getString(cursor.getColumnIndexOrThrow("person"));
-                            body = cursor.getString(cursor.getColumnIndexOrThrow("body"));
-                            Log.d("SMS", date + " / " + person + "/n/t" + body + "/n");
+                            number = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS));
+                            body = cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY));
+                            Log.d("sms", "Tel:"+number+" Mensaje:"+body);
                             count++;
+                        }
+
+                        if (cursor != null) {
+                            cursor.close();
                         }
                     }
 
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(9000);
                     } catch (InterruptedException e) {
-                        Log.d("CATCH_SLEEP", e.getMessage());
+                        Log.d("catch_sleep", e.getMessage());
                         break;
                     }
+
                 }
 
             }
